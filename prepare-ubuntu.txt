@@ -1,0 +1,72 @@
+sudo bash -c 'cat > /tmp/install-k8s-tools.sh << "EOF"
+#!/usr/bin/env bash
+set -euo pipefail
+
+KUBECTL_VERSION="v1.30.0"
+ARCH="amd64"
+
+echo "== APT packages =="
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  curl \
+  git \
+  vim \
+  htop \
+  tmux \
+  unzip \
+  ca-certificates \
+  net-tools \
+  jq \
+  tree \
+  tar
+
+echo
+echo "== Home for ubuntu =="
+mkdir -p /home/ubuntu/.kube
+chown -R ubuntu:ubuntu /home/ubuntu/.kube
+
+echo
+echo "== kubectl ${KUBECTL_VERSION} =="
+cd /tmp
+curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${ARCH}/kubectl"
+install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+rm -f kubectl
+
+echo
+echo "== k9s =="
+cd /tmp
+rm -rf /tmp/k9s-install
+mkdir -p /tmp/k9s-install
+cd /tmp/k9s-install
+
+curl -L "https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_${ARCH}.tar.gz" -o k9s.tar.gz
+tar -xzf k9s.tar.gz
+install -o root -g root -m 0755 k9s /usr/local/bin/k9s
+
+cd /tmp
+rm -rf /tmp/k9s-install
+
+echo
+echo "== kubectx / kubens =="
+rm -rf /opt/kubectx
+git clone https://github.com/ahmetb/kubectx /opt/kubectx
+
+ln -sf /opt/kubectx/kubectx /usr/local/bin/kubectx
+ln -sf /opt/kubectx/kubens /usr/local/bin/kubens
+
+chmod +x /opt/kubectx/kubectx
+chmod +x /opt/kubectx/kubens
+
+echo
+echo "== Verification =="
+kubectl version --client=true
+k9s version || true
+kubectx --help >/dev/null && echo "kubectx OK"
+kubens --help >/dev/null && echo "kubens OK"
+
+echo
+echo "Installation finished."
+EOF
+
+chmod +x /tmp/install-k8s-tools.sh
+/tmp/install-k8s-tools.sh'
