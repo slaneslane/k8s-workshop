@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-secret-demo
+  namespace: qa-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-secret-demo
+  template:
+    metadata:
+      labels:
+        app: nginx-secret-demo
+    spec:
+      volumes:
+        - name: html
+          emptyDir: {}
+
+      initContainers:
+        - name: generate-html
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              cat <<EOF > /html/index.html
+              <html>
+                <head>
+                  <title>${PAGE_TITLE}</title>
+                </head>
+                <body>
+                  <h1>${PAGE_HEADER}</h1>
+                  <p>${SECRET_MESSAGE}</p>
+                </body>
+              </html>
+              EOF
+          env:
+            - name: PAGE_TITLE
+              valueFrom:
+                configMapKeyRef:
+                  name: page-config
+                  key: PAGE_TITLE
+            - name: PAGE_HEADER
+              valueFrom:
+                configMapKeyRef:
+                  name: page-config
+                  key: PAGE_HEADER
+            - name: SECRET_MESSAGE
+              valueFrom:
+                secretKeyRef:
+                  name: page-secret
+                  key: SECRET_MESSAGE
+          volumeMounts:
+            - name: html
+              mountPath: /html
+
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html

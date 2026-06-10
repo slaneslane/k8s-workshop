@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-06
+  namespace: qa-challenge-06
+spec:
+  selector:
+    app: web-06
+  ports:
+    - port: 80
+      targetPort: 8080

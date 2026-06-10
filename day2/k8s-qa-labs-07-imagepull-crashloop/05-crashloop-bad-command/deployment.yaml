@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crashloop-bad-command
+  namespace: qa-troubleshooting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crashloop-bad-command
+  template:
+    metadata:
+      labels:
+        app: crashloop-bad-command
+    spec:
+      containers:
+        - name: app
+          image: busybox:1.36
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Trying to start application..."
+              /app/start.sh

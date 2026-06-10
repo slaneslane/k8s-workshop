@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-04
+  namespace: qa-challenge-04
+spec:
+  selector:
+    app: web-04
+  ports:
+    - port: 80
+      targetPort: 80

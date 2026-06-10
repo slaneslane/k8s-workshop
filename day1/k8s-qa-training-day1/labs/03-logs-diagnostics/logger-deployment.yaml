@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qa-logger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qa-logger
+  template:
+    metadata:
+      labels:
+        app: qa-logger
+    spec:
+      containers:
+        - name: logger
+          image: busybox:1.36
+          command: ["sh", "-c"]
+          args:
+            - |
+              i=0
+              while true; do
+                echo "$(date) QA logger message number $i"
+                i=$((i+1))
+                sleep 5
+              done

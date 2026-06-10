@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: page-config
+  namespace: qa-demo
+data:
+  PAGE_TITLE: "Kubernetes QA Lab"
+  PAGE_HEADER: "Hello from ConfigMap"

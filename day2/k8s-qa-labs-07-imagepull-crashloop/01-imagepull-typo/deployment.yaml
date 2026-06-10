@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imagepull-typo
+  namespace: qa-troubleshooting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imagepull-typo
+  template:
+    metadata:
+      labels:
+        app: imagepull-typo
+    spec:
+      containers:
+        - name: web
+          image: ngnix:1.27
+          ports:
+            - containerPort: 80

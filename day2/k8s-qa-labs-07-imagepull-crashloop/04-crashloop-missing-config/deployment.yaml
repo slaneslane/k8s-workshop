@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crashloop-missing-config
+  namespace: qa-troubleshooting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crashloop-missing-config
+  template:
+    metadata:
+      labels:
+        app: crashloop-missing-config
+    spec:
+      containers:
+        - name: app
+          image: busybox:1.36
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Checking required APP_MODE..."
+              if [ -z "$APP_MODE" ]; then
+                echo "ERROR: APP_MODE is missing"
+                exit 1
+              fi
+              while true; do
+                echo "APP_MODE=$APP_MODE"
+                sleep 10
+              done
+          env:
+            - name: APP_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_MODE
+                  optional: true

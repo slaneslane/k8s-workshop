@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bad-readiness
+  namespace: qa-probes
+spec:
+  selector:
+    app: bad-readiness
+  ports:
+    - port: 80
+      targetPort: 80

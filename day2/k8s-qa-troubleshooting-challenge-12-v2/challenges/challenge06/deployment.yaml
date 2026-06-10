@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-06
+  namespace: qa-challenge-06
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-06
+  template:
+    metadata:
+      labels:
+        app: web-06
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports:
+            - containerPort: 80

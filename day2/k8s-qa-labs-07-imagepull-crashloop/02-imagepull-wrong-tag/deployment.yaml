@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imagepull-wrong-tag
+  namespace: qa-troubleshooting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imagepull-wrong-tag
+  template:
+    metadata:
+      labels:
+        app: imagepull-wrong-tag
+    spec:
+      containers:
+        - name: web
+          image: nginx:not-existing-tag
+          ports:
+            - containerPort: 80

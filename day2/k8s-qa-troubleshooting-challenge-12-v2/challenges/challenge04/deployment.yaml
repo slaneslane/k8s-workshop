@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-04
+  namespace: qa-challenge-04
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-04
+  template:
+    metadata:
+      labels:
+        app: web-04
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+          env:
+            - name: APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: web-secret
+                  key: APP_PASSWORD
